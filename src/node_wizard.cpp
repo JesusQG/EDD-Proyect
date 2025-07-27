@@ -109,3 +109,9 @@ t Node<t>::get_data()
 {
     return this->data;
 }
+
+template <class t>
+int Node<t>::get_father()
+{
+    return this->w.id_father;
+}

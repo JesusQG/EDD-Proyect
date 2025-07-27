@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 using namespace std;
 
@@ -16,10 +17,8 @@ struct Wizard
     string type_magic;
     bool is_owner;
 
-    // Constructor por defecto
     Wizard() : id(-999), name(""), last_name(""), gender(' '), age(0), id_father(-999), is_dead(false), type_magic(""), is_owner(false) {}
 
-    // Constructor personalizado
     Wizard(int id, string name, string last_name, char gender, int age, int id_father, bool is_dead, string type_magic, bool is_owner) : id(id), name(name), last_name(last_name), gender(gender), age(age), id_father(id_father), is_dead(is_dead), type_magic(type_magic), is_owner(is_owner) {}
 };
 
@@ -30,7 +29,7 @@ private:
     Wizard w;
     Node<t> *left;
     Node<t> *right;
-    t data;
+    t data = 0;
 
 public:
     Node();
@@ -41,8 +40,15 @@ public:
     Wizard get_wizard();
     bool not_father();
     void set_data(t);
+    int get_father();
     t get_data();
     void set_childrenL(Node<t> *);
     void set_childrenR(Node<t> *);
     bool wizard_alive();
+};
+
+enum
+{
+    izq,
+    der
 };

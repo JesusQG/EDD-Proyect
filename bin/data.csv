@@ -1,10 +1,8 @@
 id,name,last_name,gender,age,id_father,is_dead,type_magic,is_owner
 1,Gandalf,Elgris,H,80,0,0,elemental,1
 2,ElGordoLucho,Paz,H,55,1,0,unique,0
-3,LaCaty,Matute,M,53,1,0,mixed,0
+3,Yonaikleverson,Matute,M,53,1,0,mixed,0
 4,Pepito,Andrade,H,35,2,0,elemental,0
-5,Luchín,González,H,33,2,0,no_magic,0
+5,yubiritnaidenkenson,González,H,33,2,0,no_magic,0
 6,Yelitza,Chirinos,M,32,3,0,mixed,0
-7,Mariela,Paredes,M,28,3,0,elemental,0
-
- 
+7,Yikancleirenesterson,Paredes,M,28,3,0,elemental,0
