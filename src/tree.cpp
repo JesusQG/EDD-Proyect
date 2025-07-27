@@ -43,6 +43,10 @@ void Tree<t>::print(Node<t> *node)
     {
         cout << "| ---> Este mago es el owner";
     }
+    if (w.id_father == 0)
+    {
+        cout << "| ---> Este mago es el creador del hechizo";
+    }
     cout << endl;
     print(node->get_children(der));
 }
@@ -58,29 +62,6 @@ void Tree<t>::insert(Wizard wi)
 {
     root = insert_private(wi, root);
     return;
-}
-
-template <class t>
-Node<t> *Tree<t>::search(int id_father)
-{
-    return search_private(this->root, id_father);
-}
-
-template <class t>
-Node<t> *Tree<t>::search_private(Node<t> *node, int id_father)
-{
-    if (node == nullptr)
-    {
-        return nullptr;
-    }
-    if (node->get_wizard().id == id_father)
-    {
-        return node;
-    }
-    Node<t> *found = search_private(node->get_children(izq), id_father);
-    if (found != nullptr)
-        return found;
-    return search_private(node->get_children(der), id_father);
 }
 
 template <class t>
@@ -155,13 +136,13 @@ void Tree<t>::getfromcsv()
     }
 
     file.close();
-    cout << "\nEl arbol ha sido creado correctamente\n";
+    cout << "\nARBOL CREADO CORRECTAMENTE\n";
 }
 
 template <class t>
 void Tree<t>::print_owner_alive_descendence()
 {
-    cout << "\nBuscando la descendencia vivia del mago owner...\n";
+    cout << "\nBuscando la descendencia viva del mago owner...\n";
     Node<t> *node = get_owner();
     if (node->not_father())
     {
@@ -226,4 +207,113 @@ void Tree<t>::print_alive_descendence(Node<t> *node)
     }
 
     print_alive_descendence(node->get_children(der));
+}
+
+template <class t>
+Node<t> *Tree<t>::search(int id)
+{
+    return search_private(this->root, id);
+}
+
+template <class t>
+Node<t> *Tree<t>::search_private(Node<t> *node, int id)
+{
+    if (node == nullptr)
+    {
+        return nullptr;
+    }
+    if (node->get_wizard().id == id)
+    {
+        return node;
+    }
+    Node<t> *found = search_private(node->get_children(izq), id);
+    if (found != nullptr)
+        return found;
+    return search_private(node->get_children(der), id);
+}
+
+template <class t>
+void Tree<t>::edit_wizard()
+{
+    int id;
+    cout << "\n EDITAR NODO\n ";
+    cout << "\n Ingrese el id del nodo que desea modificar: ";
+    cin >> id;
+    cout << "\n";
+    Node<t> *node = search(id);
+    if (node == nullptr)
+    {
+        cout << "Error, nodo no encontrado" << endl;
+        return;
+    }
+
+    Wizard old_wiz = node->get_wizard();
+    int id_father = old_wiz.id_father;
+
+    string name, last_name, type_magic;
+    char gender;
+    int age;
+    bool is_dead, is_owner;
+
+    cout << "Ingrese el nuevo nombre: ";
+    cin >> ws;
+    cin >> name;
+    cout << "Ingrese el nuevo apellido: ";
+    cin >> last_name;
+    cout << "Ingrese el nuevo genero (H/M): ";
+    cin >> gender;
+    cout << "Ingrese la nueva edad: ";
+    cin >> age;
+    cout << "Esta muerto? (0 = No / 1 = Si): ";
+    cin >> is_dead;
+    cout << "Ingrese el nuevo tipo de magia: ";
+    cin >> ws;
+    getline(cin, type_magic);
+    cout << "Es owner? (0 = No, 1 = Si): ";
+    cin >> is_owner;
+
+    Wizard new_wiz(id, name, last_name, gender, age, id_father, is_dead, type_magic, is_owner);
+    node->set_wizard(new_wiz);
+
+    ifstream file_in("./bin/data.csv");
+    ofstream file_out("./bin/data_temp.csv");
+    string line;
+    bool found = false;
+    getline(file_in, line);
+    file_out << line << endl;
+    while (getline(file_in, line))
+    {
+        stringstream ss(line);
+        string item;
+        getline(ss, item, ',');
+        int current_id = stoi(item);
+
+        if (current_id == id)
+        {
+            // Escribir los nuevos datos
+            file_out << new_wiz.id << ","
+                     << new_wiz.name << ","
+                     << new_wiz.last_name << ","
+                     << new_wiz.gender << ","
+                     << new_wiz.age << ","
+                     << new_wiz.id_father << ","
+                     << new_wiz.is_dead << ","
+                     << new_wiz.type_magic << ","
+                     << new_wiz.is_owner << endl;
+            found = true;
+        }
+        else
+        {
+            file_out << line << endl;
+        }
+    }
+    file_in.close();
+    file_out.close();
+    remove("./bin/data.csv");
+    rename("./bin/data_temp.csv", "./bin/data.csv");
+
+    if (found)
+        cout << "Nodo y archivo CSV modificados correctamente.\n";
+    else
+        cout << "No se encontró el id en el archivo CSV.\n";
 }

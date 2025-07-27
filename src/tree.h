@@ -23,4 +23,6 @@ public:
     Node<t> *search(int);
     Node<t> *get_owner();
     void print_owner_alive_descendence();
+    void edit_wizard();
+    void edit_wizard(int);
 };
