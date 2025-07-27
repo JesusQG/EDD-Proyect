@@ -8,6 +8,9 @@ private:
     Node<t> *root = nullptr;
     Node<t> *insert_private(Wizard, Node<t> *);
     Node<t> *search_private(Node<t> *, int);
+    Node<t> *search_owner(Node<t> *);
+    void print_alive_descendence(Node<t> *);
+    void print(Node<t> *);
 
 public:
     Tree();
@@ -15,8 +18,9 @@ public:
     bool isEmpty();
     bool isLeaf(Node<t> *);
     void getfromcsv();
-    void print();
-    void print(Node<t> *);
+    void print_inorden();
     void insert(Wizard);
     Node<t> *search(int);
+    Node<t> *get_owner();
+    void print_owner_alive_descendence();
 };

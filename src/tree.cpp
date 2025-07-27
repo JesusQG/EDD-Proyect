@@ -19,8 +19,9 @@ bool Tree<t>::isLeaf(Node<t> *node)
 }
 
 template <class t>
-void Tree<t>::print()
+void Tree<t>::print_inorden()
 {
+    cout << "\nImprimiendo arbol en inorden:\n";
     print(this->root);
     return;
 }
@@ -33,7 +34,16 @@ void Tree<t>::print(Node<t> *node)
         return;
     }
     print(node->get_children(izq));
-    cout << node->get_wizard().id << " , " << node->get_wizard().name << endl;
+    Wizard w = node->get_wizard();
+    cout << "ID: " << w.id
+         << " | Padre: " << w.id_father
+         << " | Nombre y Apellido: " << w.name << " " << w.last_name
+         << " | Magia: " << w.type_magic;
+    if (w.is_owner)
+    {
+        cout << "| ---> Este mago es el owner";
+    }
+    cout << endl;
     print(node->get_children(der));
 }
 
@@ -76,74 +86,55 @@ Node<t> *Tree<t>::search_private(Node<t> *node, int id_father)
 template <class t>
 Node<t> *Tree<t>::insert_private(Wizard wi, Node<t> *node)
 {
-
-    if (node == nullptr) // arbol vacio, insertar nodo en la raiz
+    if (node == nullptr)
     {
         return new Node<t>(wi, nullptr, nullptr);
     }
-    else
+    if (node->get_wizard().id == wi.id_father)
     {
-        int father = wi.id_father;
-        if (node->get_father() != father)
+        if (node->get_children(izq) == nullptr)
         {
-            // Cambia a usar el nuevo método search
-            node = search(father);
-            if (node == nullptr)
-                return nullptr; // No se encontró el padre
-            if (node->get_children(izq) == nullptr)
-            {
-                node->set_childrenL(new Node<t>(wi, nullptr, nullptr));
-            }
-            else
-            {
-                node->set_childrenR(new Node<t>(wi, nullptr, nullptr));
-            }
+            node->set_childrenL(new Node<t>(wi, nullptr, nullptr));
         }
-        else
+        else if (node->get_children(der) == nullptr)
         {
-            if (node->get_children(izq) == nullptr)
-            {
-                Node<t> *newnode = new Node<t>(wi, nullptr, nullptr);
-                node->set_childrenL(newnode);
-            }
-            else
-            {
-                Node<t> *newnode = new Node<t>(wi, nullptr, nullptr);
-                node->set_childrenR(newnode);
-            }
+            node->set_childrenR(new Node<t>(wi, nullptr, nullptr));
         }
+        return node;
     }
-    return this->root;
+    if (node->get_children(izq) != nullptr)
+        insert_private(wi, node->get_children(izq));
+    if (node->get_children(der) != nullptr)
+        insert_private(wi, node->get_children(der));
+
+    return node;
 }
 
 template <class t>
 void Tree<t>::getfromcsv()
 {
-    ifstream file("./bin/data.csv"); // se debe ubicar en la carpeta "PROYECTO" para abrir correctamente
+    ifstream file("./bin/data.csv");
     if (!file.is_open())
     {
         cout << "\n No se pudo abrir el archivo\n";
     }
     string line;
-    getline(file, line); // Saltar encabezado
+    getline(file, line);
 
     while (getline(file, line))
     {
         if (line.empty())
-            continue; // Saltar líneas vacías
+            continue;
 
         stringstream ss(line);
         string item;
-
         int id, age, id_father;
         char gender;
         bool is_dead, is_owner;
         string name, last_name, type_magic;
-
-        // Leer y convertir cada campo
         getline(ss, item, ',');
         if (item.empty())
-            continue; // Saltar si el campo está vacío
+            continue;
         id = stoi(item);
         getline(ss, name, ',');
         getline(ss, last_name, ',');
@@ -164,5 +155,75 @@ void Tree<t>::getfromcsv()
     }
 
     file.close();
-    cout << "\n El arbol ha sido creado\n";
+    cout << "\nEl arbol ha sido creado correctamente\n";
+}
+
+template <class t>
+void Tree<t>::print_owner_alive_descendence()
+{
+    cout << "\nBuscando la descendencia vivia del mago owner...\n";
+    Node<t> *node = get_owner();
+    if (node->not_father())
+    {
+        cout << "\nEl owner del hechizo no tiene descendientes vivos\n";
+        return;
+    }
+    else
+    {
+        print_alive_descendence(node->get_children(izq));
+        print_alive_descendence(node->get_children(der));
+    }
+    return;
+}
+
+template <class t>
+Node<t> *Tree<t>::get_owner()
+{
+    if (root == nullptr)
+    {
+        return nullptr;
+    }
+    else
+    {
+        if (root->get_wizard().is_owner == true)
+        {
+            return root;
+        }
+        else
+        {
+            Node<t> *owner = search_owner(root);
+            return owner;
+        }
+    }
+}
+
+template <class t>
+Node<t> *Tree<t>::search_owner(Node<t> *node)
+{
+    if (node == nullptr)
+        return nullptr;
+    if (node->get_wizard().is_owner)
+        return node;
+    Node<t> *found = search_owner(node->get_children(izq));
+    if (found != nullptr)
+        return found;
+    return search_owner(node->get_children(der));
+}
+
+template <class t>
+void Tree<t>::print_alive_descendence(Node<t> *node)
+{
+    if (node == nullptr)
+        return;
+    print_alive_descendence(node->get_children(izq));
+    if (node->alive())
+    {
+        Wizard w = node->get_wizard();
+        cout << "ID: " << w.id
+             << " | Padre: " << w.id_father
+             << " | Nombre y Apellido: " << w.name << " " << w.last_name
+             << " | Magia: " << w.type_magic << endl;
+    }
+
+    print_alive_descendence(node->get_children(der));
 }

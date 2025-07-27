@@ -67,9 +67,9 @@ void Node<t>::set_childrenR(Node<t> *children)
 }
 
 template <class t>
-bool Node<t>::wizard_alive()
+bool Node<t>::alive()
 {
-    return this->w.is_dead == 0;
+    return this->w.is_dead == false;
 }
 
 template <class t>

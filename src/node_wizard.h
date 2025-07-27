@@ -44,7 +44,7 @@ public:
     t get_data();
     void set_childrenL(Node<t> *);
     void set_childrenR(Node<t> *);
-    bool wizard_alive();
+    bool alive();
 };
 
 enum
