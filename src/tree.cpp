@@ -39,6 +39,14 @@ void Tree<t>::print(Node<t> *node)
          << " | Padre: " << w.id_father
          << " | Nombre y Apellido: " << w.name << " " << w.last_name
          << " | Magia: " << w.type_magic;
+    if (w.is_dead == false)
+    {
+        cout << "| Estado: vivo  ";
+    }
+    else
+    {
+        cout << "| Estado: muerto ";
+    }
     if (w.is_owner)
     {
         cout << "| ---> Este mago es el owner";
@@ -48,6 +56,7 @@ void Tree<t>::print(Node<t> *node)
         cout << "| ---> Este mago es el creador del hechizo";
     }
     cout << endl;
+    cout << "--------------------------------------------------------------------------------------------------\n";
     print(node->get_children(der));
 }
 
@@ -94,10 +103,10 @@ Node<t> *Tree<t>::insert_private(Wizard wi, Node<t> *node)
 template <class t>
 void Tree<t>::getfromcsv()
 {
-    ifstream file("./bin/data.csv");
+    ifstream file("./bin/wizard.csv");
     if (!file.is_open())
     {
-        cout << "\n No se pudo abrir el archivo\n";
+        cout << "\n No se pudo abrir el archivo, verificar la ubicacion del terminal\n";
     }
     string line;
     getline(file, line);
@@ -146,7 +155,7 @@ void Tree<t>::print_owner_alive_descendence()
     Node<t> *node = get_owner();
     if (node->not_father())
     {
-        cout << "\nEl owner del hechizo no tiene descendientes vivos\n";
+        cout << "\nNo se han encontrado descendientes vivos del nodo owner\n";
         return;
     }
     else
@@ -204,6 +213,7 @@ void Tree<t>::print_alive_descendence(Node<t> *node)
              << " | Padre: " << w.id_father
              << " | Nombre y Apellido: " << w.name << " " << w.last_name
              << " | Magia: " << w.type_magic << endl;
+        cout << "--------------------------------------------------------------------------------------------------\n";
     }
 
     print_alive_descendence(node->get_children(der));
@@ -247,14 +257,11 @@ void Tree<t>::edit_wizard()
         return;
     }
 
-    Wizard old_wiz = node->get_wizard();
-    int id_father = old_wiz.id_father;
-
     string name, last_name, type_magic;
     char gender;
     int age;
     bool is_dead, is_owner;
-
+    int id_father = node->get_wizard().id_father;
     cout << "Ingrese el nuevo nombre: ";
     cin >> ws;
     cin >> name;
@@ -275,7 +282,7 @@ void Tree<t>::edit_wizard()
     Wizard new_wiz(id, name, last_name, gender, age, id_father, is_dead, type_magic, is_owner);
     node->set_wizard(new_wiz);
 
-    ifstream file_in("./bin/data.csv");
+    ifstream file_in("./bin/wizard.csv");
     ofstream file_out("./bin/data_temp.csv");
     string line;
     bool found = false;
@@ -290,7 +297,6 @@ void Tree<t>::edit_wizard()
 
         if (current_id == id)
         {
-            // Escribir los nuevos datos
             file_out << new_wiz.id << ","
                      << new_wiz.name << ","
                      << new_wiz.last_name << ","
@@ -309,11 +315,53 @@ void Tree<t>::edit_wizard()
     }
     file_in.close();
     file_out.close();
-    remove("./bin/data.csv");
-    rename("./bin/data_temp.csv", "./bin/data.csv");
+    remove("./bin/wizard.csv");
+    rename("./bin/data_temp.csv", "./bin/wizard.csv");
 
     if (found)
         cout << "Nodo y archivo CSV modificados correctamente.\n";
     else
         cout << "No se encontró el id en el archivo CSV.\n";
+}
+template <class t>
+void Tree<t>::print_wizard_spells()
+{
+    int id;
+    cout << "\nCual es el mago del que desea ver los hechizos? : ";
+    cin >> id;
+    print_wizard_spells(id);
+}
+
+template <class t>
+void Tree<t>::print_wizard_spells(int id)
+{
+    ifstream file("./bin/spells.csv");
+    if (!file.is_open())
+    {
+        cout << "\nNo se pudo abrir el archivo de spells.\n";
+        return;
+    }
+    string line;
+    getline(file, line);
+    bool found = false;
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        string item;
+        getline(ss, item, ',');
+        int id_wizard = stoi(item);
+        if (id_wizard == id)
+        {
+            string name_spell, effect;
+            getline(ss, name_spell, ',');
+            getline(ss, effect, ',');
+            cout << "Hechizo: " << name_spell << " | Efecto: " << effect << endl;
+            found = true;
+        }
+    }
+    if (!found)
+    {
+        cout << "Este mago no tiene hechizos registrados.\n";
+    }
+    file.close();
 }

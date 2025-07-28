@@ -5,7 +5,6 @@ Node<t>::Node()
 {
     left = nullptr;
     right = nullptr;
-    data = 0;
 }
 
 template <class t>
@@ -22,7 +21,6 @@ Node<t>::Node(Wizard w, Node<t> *left, Node<t> *right)
     this->w.last_name = w.last_name;
     this->w.name = w.name;
     this->w.type_magic = w.type_magic;
-    data = 0;
 }
 
 template <class t>

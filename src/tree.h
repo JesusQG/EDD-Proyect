@@ -11,6 +11,9 @@ private:
     Node<t> *search_owner(Node<t> *);
     void print_alive_descendence(Node<t> *);
     void print(Node<t> *);
+    void print_wizard_spells(int);
+    void edit_wizard(int);
+    void insert(Wizard);
 
 public:
     Tree();
@@ -19,10 +22,9 @@ public:
     bool isLeaf(Node<t> *);
     void getfromcsv();
     void print_inorden();
-    void insert(Wizard);
     Node<t> *search(int);
     Node<t> *get_owner();
     void print_owner_alive_descendence();
     void edit_wizard();
-    void edit_wizard(int);
+    void print_wizard_spells();
 };

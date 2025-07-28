@@ -29,7 +29,7 @@ private:
     Wizard w;
     Node<t> *left;
     Node<t> *right;
-    t data = 0;
+    t data;
 
 public:
     Node();
