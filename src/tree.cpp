@@ -21,7 +21,7 @@ bool Tree<t>::isLeaf(Node<t> *node)
 template <class t>
 void Tree<t>::print_inorden()
 {
-    cout << "\nImprimiendo arbol en inorden:\n";
+    cout << "\nImprimiendo arbol:\n";
     print(this->root);
     return;
 }
@@ -49,7 +49,7 @@ void Tree<t>::print(Node<t> *node)
     }
     if (w.is_owner)
     {
-        cout << "| ---> Este mago es el owner";
+        cout << "| ---> Este mago es el owner (tu)";
     }
     if (w.id_father == 0)
     {
@@ -145,7 +145,6 @@ void Tree<t>::getfromcsv()
     }
 
     file.close();
-    cout << "\nARBOL CREADO CORRECTAMENTE\n";
 }
 
 template <class t>
@@ -246,14 +245,14 @@ template <class t>
 void Tree<t>::edit_wizard()
 {
     int id;
-    cout << "\n EDITAR NODO\n ";
-    cout << "\n Ingrese el id del nodo que desea modificar: ";
+    cout << "\n EDITAR MAGO\n ";
+    cout << "\n Ingrese el id del mago que desea modificar: ";
     cin >> id;
     cout << "\n";
     Node<t> *node = search(id);
     if (node == nullptr)
     {
-        cout << "Error, nodo no encontrado" << endl;
+        cout << "Error, mago no encontrado" << endl;
         return;
     }
 
@@ -262,8 +261,8 @@ void Tree<t>::edit_wizard()
     int age;
     bool is_dead, is_owner;
     int id_father = node->get_wizard().id_father;
+
     cout << "Ingrese el nuevo nombre: ";
-    cin >> ws;
     cin >> name;
     cout << "Ingrese el nuevo apellido: ";
     cin >> last_name;
@@ -286,14 +285,26 @@ void Tree<t>::edit_wizard()
     ofstream file_out("./bin/data_temp.csv");
     string line;
     bool found = false;
+
     getline(file_in, line);
     file_out << line << endl;
+
     while (getline(file_in, line))
     {
         stringstream ss(line);
         string item;
         getline(ss, item, ',');
         int current_id = stoi(item);
+
+        string name_csv, last_name_csv, gender_csv, age_csv, id_father_csv, is_dead_csv, type_magic_csv, is_owner_csv;
+        getline(ss, name_csv, ',');
+        getline(ss, last_name_csv, ',');
+        getline(ss, gender_csv, ',');
+        getline(ss, age_csv, ',');
+        getline(ss, id_father_csv, ',');
+        getline(ss, is_dead_csv, ',');
+        getline(ss, type_magic_csv, ',');
+        getline(ss, is_owner_csv, ',');
 
         if (current_id == id)
         {
@@ -310,18 +321,36 @@ void Tree<t>::edit_wizard()
         }
         else
         {
-            file_out << line << endl;
+            bool other_is_owner = (is_owner_csv == "1");
+            if (other_is_owner && new_wiz.is_owner)
+            {
+                is_owner_csv = "0";
+            }
+            file_out << current_id << ","
+                     << name_csv << ","
+                     << last_name_csv << ","
+                     << gender_csv << ","
+                     << age_csv << ","
+                     << id_father_csv << ","
+                     << is_dead_csv << ","
+                     << type_magic_csv << ","
+                     << is_owner_csv << endl;
         }
     }
+
     file_in.close();
     file_out.close();
     remove("./bin/wizard.csv");
     rename("./bin/data_temp.csv", "./bin/wizard.csv");
 
     if (found)
+    {
         cout << "Nodo y archivo CSV modificados correctamente.\n";
+    }
     else
+    {
         cout << "No se encontró el id en el archivo CSV.\n";
+    }
 }
 template <class t>
 void Tree<t>::print_wizard_spells()
