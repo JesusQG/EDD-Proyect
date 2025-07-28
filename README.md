@@ -6,6 +6,7 @@ ESTRUCTURA
   En esta carpeta se encuentra el codigo necesario para manejar los datos de los archivos .csv y permite cumplir una serie de requerimientos solicitados.
   Las estrcucturas dinamicas de datos se definen e implementan en esta carpeta, encontrandose un archivo .h y otro .cpp (asociados a la definicion e
   implementacion respectivamente). Finalmente, se encuentra el archivo main.cpp, el cual es el objeto de compilacion
+  
 PRECACUCIONES
   * Para avanzar al menu despues de seleccionar una opcion y esta finalize, se debe presionar el teclado.
   * Antes de modificar un nodo revise los tipos de datos, ya que luego al reobtener los datos estos pueden no ser acorde al .csv
